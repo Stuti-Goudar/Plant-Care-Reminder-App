@@ -8,6 +8,25 @@ function showScreen(screenId) {
   if (screenId === 'screen-list') renderPlants();
 }
 
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  } catch (e) {}
+}
+
+function getCalendarLink(plant) {
+  const start = plant.date.replace(/-/g, '') + 'T' + plant.time.replace(':', '') + '00';
+  const title = encodeURIComponent(`🌱 Care for ${plant.name}`);
+  const details = encodeURIComponent(`Water every ${plant.waterInterval} days. Fertilize every ${plant.fertilizerInterval} days.`);
+  return `https://google.com{title}&dates=${start}/${start}&details=${details}`;
+}
+
 function savePlant() {
   const name = document.getElementById('plantName').value.trim();
   const waterInterval = document.getElementById('waterInterval').value;
@@ -43,6 +62,7 @@ function renderPlants() {
       💧 Water: Every ${p.waterInterval} days<br>
       🧪 Fertilizer: Every ${p.fertilizerInterval} days<br>
       ⏰ Next Reminder: ${p.date} at ${p.time}<br>
+      <a href="${getCalendarLink(p)}" target="_blank" style="display:inline-block;margin-top:8px;padding:6px 10px;background:#1976d2;color:#fff;border-radius:6px;text-decoration:none;font-size:12px;">🔔 Set Phone Alarm</a>
       <button class="delete-btn" onclick="deletePlant(${index})">Delete</button>
     `;
     list.appendChild(li);
@@ -56,15 +76,21 @@ function deletePlant(index) {
   renderPlants();
 }
 
+// Check every 5 seconds using exact local phone date & time
 setInterval(() => {
   const now = new Date();
-  const currentDate = now.toISOString().split('T');
-  const currentTime = now.toTimeString().slice(0, 5);
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const currentDate = `${year}-${month}-${day}`;
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
   const plants = JSON.parse(localStorage.getItem('plants') || '[]');
   let updated = false;
 
   plants.forEach(plant => {
     if (plant.date === currentDate && plant.time === currentTime && !plant.notified) {
+      playBeep();
       alert(`🌱 Plant Care Alert: Time to care for ${plant.name}!`);
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification("Plant Care Reminder 🌱", {
@@ -77,4 +103,4 @@ setInterval(() => {
   });
 
   if (updated) localStorage.setItem('plants', JSON.stringify(plants));
-}, 30000);
+}, 5000);
