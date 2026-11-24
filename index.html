@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Care Reminder App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Screen 1: Home -->
+    <section id="screen-home" class="screen active">
+      <h1>🌱 Plant Care Reminder</h1>
+      <p>Keep your plants healthy with timely watering and fertilizer alerts.</p>
+      <button onclick="showScreen('screen-add')">➕ Add Plant</button>
+      <button onclick="showScreen('screen-list')">🌿 My Plants</button>
+      <button onclick="showScreen('screen-tips')">💡 Care Tips</button>
+    </section>
+
+    <!-- Screen 2 & 3: Add Plant & Set Reminder -->
+    <section id="screen-add" class="screen">
+      <h2>Add Plant & Reminder</h2>
+      <input type="text" id="plantName" placeholder="Plant Name (e.g., Snake Plant)" required>
+      <input type="number" id="waterInterval" placeholder="Watering Interval (days)" required>
+      <input type="number" id="fertilizerInterval" placeholder="Fertilizer Interval (days)" required>
+      <label for="reminderDate">Next Care Date:</label>
+      <input type="date" id="reminderDate" required>
+      <label for="reminderTime">Reminder Time:</label>
+      <input type="time" id="reminderTime" required>
+      <button onclick="savePlant()">Save & Set Reminder</button>
+      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
+    </section>
+
+    <!-- Screen 4: Plant List -->
+    <section id="screen-list" class="screen">
+      <h2>My Plants</h2>
+      <ul id="plantList"></ul>
+      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
+    </section>
+
+    <!-- Screen 5: Plant Care Tips -->
+    <section id="screen-tips" class="screen">
+      <h2>Plant Care Tips</h2>
+      <div class="tip-card">
+        <h3>☀️ Sunlight Requirements</h3>
+        <p>Place indoor plants near bright, indirect light. Rotate pots weekly for even growth.</p>
+      </div>
+      <div class="tip-card">
+        <h3>💧 Watering Tips</h3>
+        <p>Check the top 2 inches of soil before watering. Ensure pots have proper drainage holes.</p>
+      </div>
+      <div class="tip-card">
+        <h3>🧪 Fertilizer Information</h3>
+        <p>Use balanced liquid fertilizer every 3–4 weeks during active growing seasons.</p>
+      </div>
+      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
