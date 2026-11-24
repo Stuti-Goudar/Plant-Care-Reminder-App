@@ -4,10 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plant Care Reminder App</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div class="app-container">
+    <!-- Live On-Screen Alert Box (Works in all Android APKs) -->
+    <div id="alert-box" style="display:none;background:#d32f2f;color:#fff;padding:14px;border-radius:10px;margin-bottom:12px;font-weight:bold;text-align:center;">
+      <span id="alert-text"></span>
+      <button onclick="dismissAlert()" style="display:block;margin:8px auto 0;background:#fff;color:#d32f2f;padding:6px 14px;font-size:13px;">Dismiss</button>
+    </div>
+
     <!-- Screen 1: Home -->
     <section id="screen-home" class="screen active">
       <h1>🌱 Plant Care Reminder</h1>
@@ -56,6 +62,6 @@
       <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
     </section>
   </div>
-  <script src="app.js"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
