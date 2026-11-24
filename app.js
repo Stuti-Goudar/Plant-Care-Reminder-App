@@ -1,14 +1,19 @@
-if ("Notification" in window && Notification.permission !== "granted") {
-  Notification.requestPermission();
-}
-
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId).classList.add('active');
   if (screenId === 'screen-list') renderPlants();
 }
 
-function playBeep() {
+function triggerBanner(message) {
+  const box = document.getElementById('alert-box');
+  const text = document.getElementById('alert-text');
+  if (box && text) {
+    text.textContent = message;
+    box.style.display = 'block';
+  }
+  if (navigator.vibrate) {
+    navigator.vibrate([300, 150, 300]);
+  }
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -18,6 +23,10 @@ function playBeep() {
     osc.start();
     osc.stop(ctx.currentTime + 0.5);
   } catch (e) {}
+}
+
+function dismissAlert() {
+  document.getElementById('alert-box').style.display = 'none';
 }
 
 function getCalendarLink(plant) {
@@ -35,7 +44,7 @@ function savePlant() {
   const time = document.getElementById('reminderTime').value;
 
   if (!name || !waterInterval || !fertilizerInterval || !date || !time) {
-    alert("Please fill out all plant and reminder fields.");
+    triggerBanner("⚠️ Please fill out all plant and reminder fields.");
     return;
   }
 
@@ -43,7 +52,7 @@ function savePlant() {
   plants.push({ name, waterInterval, fertilizerInterval, date, time, notified: false });
   localStorage.setItem('plants', JSON.stringify(plants));
 
-  alert(`Saved ${name}! Reminder set for ${date} at ${time}.`);
+  triggerBanner(`✅ Saved ${name}! Reminder set for ${date} at ${time}.`);
   document.getElementById('plantName').value = '';
   document.getElementById('waterInterval').value = '';
   document.getElementById('fertilizerInterval').value = '';
@@ -76,8 +85,7 @@ function deletePlant(index) {
   renderPlants();
 }
 
-// Check every 5 seconds using exact local phone date & time
-setInterval(() => {
+function checkReminders() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -90,17 +98,13 @@ setInterval(() => {
 
   plants.forEach(plant => {
     if (plant.date === currentDate && plant.time === currentTime && !plant.notified) {
-      playBeep();
-      alert(`🌱 Plant Care Alert: Time to care for ${plant.name}!`);
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("Plant Care Reminder 🌱", {
-          body: `Time to water/fertilize ${plant.name}!`
-        });
-      }
+      triggerBanner(`🌱 CARE ALERT: Time to water & fertilize ${plant.name}!`);
       plant.notified = true;
       updated = true;
     }
   });
 
   if (updated) localStorage.setItem('plants', JSON.stringify(plants));
-}, 5000);
+}
+
+setInterval(checkReminders, 3000);
