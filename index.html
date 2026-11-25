@@ -1,225 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plant Care Notification App</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #e8f5e9;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    .app-container {
-      background: #ffffff;
-      width: 100%;
-      max-width: 420px;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    }
-    .screen { display: none; flex-direction: column; gap: 12px; }
-    .screen.active { display: flex; }
-    h1, h2 { color: #1b5e20; }
-    p { color: #4a5568; font-size: 14px; line-height: 1.5; }
-    input, select, button {
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #cbd5e0;
-      font-size: 15px;
-    }
-    button {
-      background: #2e7d32;
-      color: #ffffff;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover { background: #1b5e20; }
-    button.secondary { background: #c8e6c9; color: #1b5e20; }
-    button.notify-btn { background: #0277bd; margin-top: 8px; padding: 8px 12px; font-size: 13px; }
-    button.delete-btn { background: #d32f2f; margin-top: 8px; padding: 8px 12px; font-size: 13px; }
-    ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    li {
-      background: #f1f8e9;
-      padding: 12px;
-      border-left: 4px solid #2e7d32;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .tip-card { background: #f1f8e9; padding: 12px; border-radius: 8px; }
-    .tip-card h3 { color: #2e7d32; font-size: 15px; margin-bottom: 4px; }
-    #status-banner {
-      display: none;
-      background: #1b5e20;
-      color: #fff;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plant Care Reminders</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-container">
-    <div id="status-banner"></div>
+  <div class="card">
+    <h1>🌱 Plant Care Reminders</h1>
+    <button id="enableBtn" class="notify-btn">Enable Notifications</button>
+    <p id="permStatus" class="status">Notification status: Checking...</p>
 
-    <!-- Screen 1: Home -->
-    <section id="screen-home" class="screen active">
-      <h1>🌱 Plant Care App</h1>
-      <p>Manage your plants and send instant care notifications to your phone.</p>
-      <button onclick="enableNotifications()">🔔 1. Allow Phone Notifications</button>
-      <button onclick="showScreen('screen-add')">➕ 2. Add Plant</button>
-      <button onclick="showScreen('screen-list')">🌿 3. My Plants & Notify</button>
-      <button class="secondary" onclick="showScreen('screen-tips')">💡 Care Tips</button>
-    </section>
+    <div class="task">
+      <label for="waterTime">💧 Water Time</label>
+      <input type="time" id="waterTime" />
+      <button onclick="setReminder('water')">Set</button>
+      <span id="waterStatus" class="badge">Not set</span>
+    </div>
 
-    <!-- Screen 2: Add Plant -->
-    <section id="screen-add" class="screen">
-      <h2>Add New Plant</h2>
-      <input type="text" id="plantName" placeholder="Plant Name (e.g., Monstera)">
-      <select id="careType">
-        <option value="Watering Needed 💧">Watering Needed 💧</option>
-        <option value="Fertilizer Needed 🧪">Fertilizer Needed 🧪</option>
-        <option value="Sunlight Check ☀️">Sunlight Check ☀️</option>
-      </select>
-      <input type="text" id="careNote" placeholder="Care Note (e.g., 200ml water every 3 days)">
-      <button onclick="savePlant()">Save Plant & Send Notification</button>
-      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
-    </section>
+    <div class="task">
+      <label for="fertilizerTime">🧪 Fertilizer Time</label>
+      <input type="time" id="fertilizerTime" />
+      <button onclick="setReminder('fertilizer')">Set</button>
+      <span id="fertilizerStatus" class="badge">Not set</span>
+    </div>
 
-    <!-- Screen 3: My Plants -->
-    <section id="screen-list" class="screen">
-      <h2>My Plants</h2>
-      <ul id="plantList"></ul>
-      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
-    </section>
-
-    <!-- Screen 4: Care Tips -->
-    <section id="screen-tips" class="screen">
-      <h2>Plant Care Tips</h2>
-      <div class="tip-card">
-        <h3>☀️ Sunlight</h3>
-        <p>Keep indoor plants in bright, indirect sunlight.</p>
-      </div>
-      <div class="tip-card">
-        <h3>💧 Watering</h3>
-        <p>Water only when the top 2 inches of soil feel dry.</p>
-      </div>
-      <div class="tip-card">
-        <h3>🧪 Fertilizer</h3>
-        <p>Feed with liquid fertilizer once every 3–4 weeks.</p>
-      </div>
-      <button class="secondary" onclick="showScreen('screen-home')">Back to Home</button>
-    </section>
+    <div class="task">
+      <label for="flowersTime">🌸 Flowers Care Time</label>
+      <input type="time" id="flowersTime" />
+      <button onclick="setReminder('flowers')">Set</button>
+      <span id="flowersStatus" class="badge">Not set</span>
+    </div>
   </div>
 
-  <script>
-    // Register an inline Service Worker so Android Chrome allows real system notifications
-    let swReg = null;
-    if ('serviceWorker' in navigator) {
-      const swCode = `self.addEventListener('notificationclick', e => e.notification.close());`;
-      const blob = new Blob([swCode], { type: 'application/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(blob))
-        .then(reg => { swReg = reg; })
-        .catch(() => {});
-    }
-
-    function showBanner(msg) {
-      const banner = document.getElementById('status-banner');
-      banner.textContent = msg;
-      banner.style.display = 'block';
-      setTimeout(() => { banner.style.display = 'none'; }, 4000);
-    }
-
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      if (id === 'screen-list') renderPlants();
-    }
-
-    async function enableNotifications() {
-      if (!('Notification' in window)) {
-        showBanner("⚠️ Notifications are not supported in this browser.");
-        return;
-      }
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        sendSystemNotification("🌱 Notifications Enabled!", "Your Plant Care App can now send alerts.");
-        showBanner("✅ Phone notifications enabled!");
-      } else {
-        showBanner("⚠️ Please allow notifications in browser settings.");
-      }
-    }
-
-    function sendSystemNotification(title, body) {
-      if (navigator.vibrate) navigator.vibrate();
-      if (Notification.permission === 'granted') {
-        if (swReg && swReg.showNotification) {
-          swReg.showNotification(title, { body: body, vibrate: });
-        } else {
-          new Notification(title, { body: body });
-        }
-      }
-      showBanner(`${title} — ${body}`);
-    }
-
-    function savePlant() {
-      const name = document.getElementById('plantName').value.trim();
-      const careType = document.getElementById('careType').value;
-      const note = document.getElementById('careNote').value.trim() || "Regular care scheduled";
-
-      if (!name) {
-        showBanner("⚠️ Please enter a plant name.");
-        return;
-      }
-
-      const plants = JSON.parse(localStorage.getItem('plants_v2') || '[]');
-      plants.push({ name, careType, note });
-      localStorage.setItem('plants_v2', JSON.stringify(plants));
-
-      sendSystemNotification(`🌱 ${name}: ${careType}`, note);
-      document.getElementById('plantName').value = '';
-      document.getElementById('careNote').value = '';
-      showScreen('screen-list');
-    }
-
-    function notifyPlant(index) {
-      const plants = JSON.parse(localStorage.getItem('plants_v2') || '[]');
-      const p = plants[index];
-      if (p) {
-        sendSystemNotification(`🌱 Plant Care Alert: ${p.name}`, `${p.careType} — ${p.note}`);
-      }
-    }
-
-    function deletePlant(index) {
-      const plants = JSON.parse(localStorage.getItem('plants_v2') || '[]');
-      plants.splice(index, 1);
-      localStorage.setItem('plants_v2', JSON.stringify(plants));
-      renderPlants();
-    }
-
-    function renderPlants() {
-      const list = document.getElementById('plantList');
-      const plants = JSON.parse(localStorage.getItem('plants_v2') || '[]');
-      list.innerHTML = plants.length ? '' : '<li>No plants added yet.</li>';
-
-      plants.forEach((p, i) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <strong>🌱 ${p.name}</strong><br>
-          Task: ${p.careType}<br>
-          Note: ${p.note}<br>
-          <button class="notify-btn" onclick="notifyPlant(${i})">🔔 Send Notification</button>
-          <button class="delete-btn" onclick="deletePlant(${i})">Delete</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
